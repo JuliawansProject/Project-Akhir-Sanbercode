@@ -1,0 +1,15 @@
+{
+  "validUsername": "Admin",
+  "validPassword": "admin123",
+  "invalidUsername": "Admin12",
+  "invalidPassword": "admin125",
+  "emptyUsername": "",
+  "emptyPassword": "",
+  "lowerCaseUsername": "admin",
+  "lowerCasePassword": "adminn",
+  "spacecdUsername": "  Admin  ",
+  "spacecdPassword": "  admin123  ",
+  "uniCodeUsername": "Admin😀🔥",
+  "longUsername": "AdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdmin",
+  "longPassword": "admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123"
+}
