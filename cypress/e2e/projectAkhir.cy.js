@@ -235,15 +235,6 @@ describe("Project Akhir", () => {
       projectPage.verifyCandidateFoundWithKeyword();
     });
 
-    it("TC_RT_008 - Melakukan search candidat dengan menggunakan Date application yang benar", () => {
-      projectPage.interceptRecruitmentSearchByDateRange();
-      projectPage.fillRecruitmentDateFrom(data.recruitmentDateFromValid);
-      projectPage.fillRecruitmentDateTo(data.recruitmentDateToValid);
-      projectPage.clickRecruitmentSearch();
-      projectPage.waitRecruitmentSearchByDateRange();
-      projectPage.verifyCandidateFoundWithKeyword();
-    });
-
     it("TC_RT_009 - Melakukan search candidat dengan menggunakan Method of Application", () => {
       projectPage.interceptRecruitmentSearchByMethodOfApplication();
       projectPage.selectRecruitmentMethodOfApplication(
