@@ -339,37 +339,47 @@ class ProjectPage {
   // =========================================================
   // ACTION - Recruitment
   // =========================================================
+  // FIX (v2): percobaan pertama pakai `.closest(".oxd-grid-item")` juga
+  // tidak berhasil — data locator (XPath) dari testRigor menunjukkan
+  // struktur DOM form Recruitment memakai <div> polos berlapis TANPA
+  // class pembeda seperti "oxd-grid-item" di antara label dan elemen
+  // select-nya, jadi pendekatan "naik dari label" tidak reliable di
+  // form ini. XPath yang dikonfirmasi:
+  //   (//div[@class='oxd-select-text oxd-select-text--active'])[3]
+  //   → cocok dengan field ke-3 pada baris (Hiring Manager), sesuai
+  //     urutan visual: Job Title(1), Vacancy(2), Hiring Manager(3),
+  //     Status(4).
+  // Solusi paling stabil: pakai index posisi `.oxd-select-text` secara
+  // langsung — pola yang sama yang sudah dipakai (dan sukses) di
+  // halaman Directory (`selectDirectoryJobTitle`/`selectDirectoryLocation`).
   selectRecruitmentJobTitle(jobTitle) {
-    cy.contains("label.oxd-label", "Job Title")
-      .parent()
-      .find(".oxd-select-text", { timeout: 10000 })
-      .click();
+    cy.get(".oxd-select-text", { timeout: 10000 }).eq(0).click();
     cy.contains(".oxd-select-option", jobTitle, { timeout: 10000 }).click();
   }
 
   selectRecruitmentVacancy(vacancy) {
-    cy.contains("label", "Vacancy").parent().find(".oxd-select-text").click();
-    cy.contains(".oxd-select-option", vacancy).click();
+    cy.get(".oxd-select-text", { timeout: 10000 }).eq(1).click();
+    cy.contains(".oxd-select-option", vacancy, { timeout: 10000 }).click();
   }
 
   selectRecruitmentHiringManager(manager) {
-    cy.contains("label", "Hiring Manager")
-      .parent()
-      .find(".oxd-select-text")
-      .click();
-    cy.contains(".oxd-select-option", manager).click();
+    cy.get(".oxd-select-text", { timeout: 10000 }).eq(2).click();
+    cy.contains(".oxd-select-option", manager, { timeout: 10000 }).click();
   }
 
   selectRecruitmentStatus(status) {
-    cy.contains("label", "Status").parent().find(".oxd-select-text").click();
-    cy.contains(".oxd-select-option", status).click();
+    cy.get(".oxd-select-text", { timeout: 10000 }).eq(3).click();
+    cy.contains(".oxd-select-option", status, { timeout: 10000 }).click();
   }
 
   fillRecruitmentCandidateName(name) {
     cy.get('input[placeholder="Type for hints..."]')
       .clear()
       .type(name, { delay: 50 });
-
+    // Tidak perlu klik autocomplete option: field ini tetap memfilter
+    // berdasarkan teks yang diketik walau tidak ada suggestion yang
+    // dipilih. Memaksa klik suggestion bikin TC_RT_010 (nama tidak
+    // terdaftar) selalu timeout karena suggestion memang tidak muncul.
     cy.get("body").click(0, 0); // tutup dropdown biar tidak menghalangi tombol Search
   }
 
@@ -390,11 +400,10 @@ class ProjectPage {
   }
 
   selectRecruitmentMethodOfApplication(method) {
-    cy.contains("label", "Method of Application")
-      .parent()
-      .find(".oxd-select-text")
-      .click();
-    cy.contains(".oxd-select-option", method).click();
+    // Field select ke-5 di form ini (setelah Job Title, Vacancy,
+    // Hiring Manager, Status).
+    cy.get(".oxd-select-text", { timeout: 10000 }).eq(4).click();
+    cy.contains(".oxd-select-option", method, { timeout: 10000 }).click();
   }
 
   clickRecruitmentSearch() {
@@ -504,7 +513,12 @@ class ProjectPage {
 
   verifyRedirectedToAddCandidatePage() {
     cy.url({ timeout: 15000 }).should("include", "/recruitment/addCandidate");
-    cy.contains("h5", "Add Candidate", { timeout: 15000 }).should("be.visible");
+    // FIX: heading "Add Candidate" ternyata bukan tag h5 saja (lihat error
+    // log TC_RT_014), samakan dengan pola yang sudah dipakai di Directory
+    // page (h5, h6) supaya tidak bergantung pada tag heading yang pasti.
+    cy.contains("h5, h6", "Add Candidate", { timeout: 15000 }).should(
+      "be.visible",
+    );
     cy.get('input[placeholder="First Name"]').should("be.visible");
     cy.get('input[placeholder="Last Name"]').should("be.visible");
   }
