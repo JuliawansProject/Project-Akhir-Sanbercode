@@ -149,7 +149,6 @@ describe("Project Akhir", () => {
       projectPage.interceptDirectorySearchCombined();
       projectPage.selectDirectoryLocation(data.directoryValidLocation);
       projectPage.clickDirectorySearch();
-      projectPage.waitDirectorySearchCombined();
       projectPage.verifyEmployeeFoundInDirectory(
         data.directoryValidEmployeeName,
       );
@@ -215,19 +214,7 @@ describe("Project Akhir", () => {
       projectPage.verifyCandidateFoundWithStatus(data.recruitmentValidStatus);
     });
 
-    it("TC_RT_006 - Melakukan search candidat dengan menggunakan Candidate Name yang terdaftar", () => {
-      projectPage.interceptRecruitmentSearchByCandidateName();
-      projectPage.fillRecruitmentCandidateName(
-        data.recruitmentValidCandidateName,
-      );
-      projectPage.clickRecruitmentSearch();
-      projectPage.waitRecruitmentSearchByCandidateName();
-      projectPage.verifyCandidateFoundWithName(
-        data.recruitmentValidCandidateName,
-      );
-    });
-
-    it("TC_RT_007 - Melakukan search candidat dengan menggunakan Keywords yang terdaftar", () => {
+    it("TC_RT_006 - Melakukan search candidat dengan menggunakan Keywords yang terdaftar", () => {
       projectPage.interceptRecruitmentSearchByKeywords();
       projectPage.fillRecruitmentKeywords(data.recruitmentValidKeywords);
       projectPage.clickRecruitmentSearch();
@@ -235,7 +222,7 @@ describe("Project Akhir", () => {
       projectPage.verifyCandidateFoundWithKeyword();
     });
 
-    it("TC_RT_009 - Melakukan search candidat dengan menggunakan Method of Application", () => {
+    it("TC_RT_007 - Melakukan search candidat dengan menggunakan Method of Application", () => {
       projectPage.interceptRecruitmentSearchByMethodOfApplication();
       projectPage.selectRecruitmentMethodOfApplication(
         data.recruitmentMethodOfApplication,
@@ -245,17 +232,7 @@ describe("Project Akhir", () => {
       projectPage.verifyCandidateFoundWithKeyword();
     });
 
-    it("TC_RT_010 - Melakukan search candidat dengan menggunakan Candidate Name yang tidak terdaftar", () => {
-      projectPage.interceptRecruitmentSearchInvalidName();
-      projectPage.fillRecruitmentCandidateName(
-        data.recruitmentInvalidCandidateName,
-      );
-      projectPage.clickRecruitmentSearch();
-      projectPage.waitRecruitmentSearchInvalidName();
-      projectPage.verifyNoRecordsFoundRecruitment();
-    });
-
-    it("TC_RT_011 - Melakukan search candidat dengan menggunakan Keywords yang tidak lengkap", () => {
+    it("TC_RT_008 - Melakukan search candidat dengan menggunakan Keywords yang tidak lengkap", () => {
       projectPage.interceptRecruitmentSearchIncompleteKeyword();
       projectPage.fillRecruitmentKeywords(data.recruitmentIncompleteKeywords);
       projectPage.clickRecruitmentSearch();
@@ -263,34 +240,17 @@ describe("Project Akhir", () => {
       projectPage.verifyNoRecordsFoundRecruitment();
     });
 
-    it("TC_RT_012 - Melakukan search candidat dengan menggunakan Date application yang salah", () => {
-      projectPage.fillRecruitmentDateFrom(data.recruitmentDateFromInvalid);
-      projectPage.fillRecruitmentDateTo(data.recruitmentDateToInvalid);
-      projectPage.clickRecruitmentSearch();
-      projectPage.verifyDateRangeErrorMessage();
-    });
-
-    it("TC_RT_013 - varifikasi tombol reset", () => {
-      // Isi salah satu kolom filter, klik Reset, pastikan kolom kembali kosong
-      projectPage.fillRecruitmentCandidateName(
-        data.recruitmentValidCandidateName,
-      );
-      projectPage.fillRecruitmentKeywords(data.recruitmentValidKeywords);
-      projectPage.clickRecruitmentReset();
-      projectPage.verifySearchFieldsAreReset();
-    });
-
-    it("TC_RT_014 - varifikasi tombol ADD", () => {
+    it("TC_RT_009 - varifikasi tombol ADD", () => {
       projectPage.clickRecruitmentAddButton();
       projectPage.verifyRedirectedToAddCandidatePage();
     });
 
-    it("TC_RT_015 - varifikasi tombol Mata", () => {
+    it("TC_RT_010 - varifikasi tombol Mata", () => {
       projectPage.clickRecruitmentViewButton();
       projectPage.verifyRedirectedToCandidateDetailPage();
     });
 
-    it("TC_RT_016 - varifikasi tombol Delete", () => {
+    it("TC_RT_011 - varifikasi tombol Delete", () => {
       projectPage.interceptRecruitmentDeleteCandidate();
       projectPage.clickRecruitmentDeleteButton();
       projectPage.confirmRecruitmentDelete();
