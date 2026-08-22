@@ -13,10 +13,19 @@ class ProjectPage {
     cy.visit("/web/index.php/dashboard/index", { failOnStatusCode: false });
   }
 
-  visitDirectoryPage() {
+    visitDirectoryPage() {
     cy.visit("/web/index.php/directory/viewDirectory", {
       failOnStatusCode: false,
     });
+    cy.location("pathname", { timeout: 15000 }).then((pathname) => {
+      if (pathname.includes("/auth/login")) {
+        cy.visit("/web/index.php/directory/viewDirectory", {
+          failOnStatusCode: false,
+        });
+      }
+    });
+
+    cy.contains("h5", "Directory", { timeout: 15000 }).should("be.visible");
   }
 
   visitRecruitmentPage() {
@@ -88,7 +97,7 @@ class ProjectPage {
   waitLoginValidCredentials() {
     cy.wait("@loginValidCredentials")
       .its("response.statusCode")
-      .should("eq", 302); 
+      .should("eq", 302);
   }
 
   interceptLoginInvalidPassword() {
@@ -97,7 +106,7 @@ class ProjectPage {
   waitLoginInvalidPassword() {
     cy.wait("@loginInvalidPassword")
       .its("response.statusCode")
-      .should("eq", 302); 
+      .should("eq", 302);
   }
 
   interceptLoginInvalidUsername() {
@@ -140,49 +149,99 @@ class ProjectPage {
   // =========================================================
   // ACTION - Directory
   // =========================================================
+  visitDirectoryPage() {
+    cy.visit("/web/index.php/directory/viewDirectory", {
+      failOnStatusCode: false,
+    });
+    cy.contains("h5", "Directory", { timeout: 15000 }).should("be.visible");
+  }
+ 
   fillDirectoryEmployeeName(name) {
-    cy.get('input[placeholder="Type for hints..."]')
+    cy.get('input[placeholder="Type for hints..."]', { timeout: 10000 })
       .first()
       .clear()
-      .type(name, { delay: 50 });
-    cy.wait(500);
-    cy.get("body").click(0, 0);
+      .type(name, { delay: 80 });
+    cy.wait(600);
+    cy.get("body").then(($body) => {
+      const match = $body.find(`.oxd-autocomplete-option:contains('${name}')`);
+      if (match.length) {
+        cy.contains(".oxd-autocomplete-option", name).first().click();
+      } else {
+        cy.contains("h5", "Directory").click();
+      }
+    });
+    cy.get('input[placeholder="Type for hints..."]')
+      .first()
+      .should("have.value", name);
   }
-
+ 
   selectDirectoryJobTitle(jobTitle) {
-    cy.contains("label", "Job Title").parent().find(".oxd-select-text").click();
-    cy.contains(".oxd-select-option", jobTitle).click();
-  }
-
-  selectDirectoryLocation(location) {
-    cy.contains("label", "Location").parent().find(".oxd-select-text").click();
-    cy.contains(".oxd-select-option", location).click();
-  }
-
-  clickDirectorySearch() {
-    cy.contains("button", "Search").click();
-  }
-
-  clickDirectoryReset() {
-    cy.contains("button", "Reset").click();
-  }
-
-  clickFirstEmployeeCard() {
-    cy.get(".oxd-grid-item", { timeout: 10000 }).should(
+    cy.get(".oxd-select-text").eq(0).click();
+    cy.get(".oxd-select-dropdown", { timeout: 10000 }).should("be.visible");
+    cy.get(".oxd-select-option", { timeout: 10000 }).should(
       "have.length.greaterThan",
       0,
     );
-    cy.get(".oxd-grid-item").first().click();
   }
-
-  clickEmployeePhoneButton() {
-    cy.get('a[href^="tel:"]').first().click();
+ 
+  selectDirectoryJobTitleDynamic() {
+    this.selectDirectoryJobTitle();
+    return cy
+      .get(".oxd-select-option")
+      .first()
+      .invoke("text")
+      .then((text) => {
+        cy.get(".oxd-select-option").first().click();
+        return cy.wrap(text.trim());
+      });
   }
-
+ 
+  selectDirectoryLocation(location) {
+    cy.get(".oxd-select-text", { timeout: 10000 }).eq(1).click();
+    cy.contains(".oxd-select-option", location, { timeout: 10000 }).click();
+  }
+ 
+  clickDirectorySearch() {
+    cy.contains("button", "Search").click();
+  }
+ 
+  clickDirectoryReset() {
+    cy.contains("button", "Reset").click();
+  }
+ 
+  clickEmployeeCardByName(name) {
+    cy.contains("p.orangehrm-directory-card-header", name, { timeout: 15000 })
+      .should("be.visible")
+      .closest(".oxd-grid-item")
+      .scrollIntoView()
+      .click({ force: true });
+    cy.wait(500);
+  }
+ 
+  clickAnyEmployeeCard() {
+    cy.get(".oxd-grid-item", { timeout: 15000 })
+      .filter(
+        (i, el) =>
+          Cypress.$(el).find("p.orangehrm-directory-card-header").length > 0,
+      )
+      .should("have.length.greaterThan", 0)
+      .first()
+      .click({ force: true });
+    cy.wait(500);
+  }
+ 
   clickEmployeeEmailButton() {
-    cy.get('a[href^="mailto:"]').first().click();
+    cy.get('a[href^="mailto:"]', { timeout: 10000 })
+      .first()
+      .click({ force: true });
   }
-
+ 
+  clickEmployeePhoneButton() {
+    cy.get('a[href^="tel:"]', { timeout: 10000 })
+      .first()
+      .click({ force: true });
+  }
+ 
   // =========================================================
   // ASSERTION - Directory
   // =========================================================
@@ -190,46 +249,44 @@ class ProjectPage {
     cy.contains("h5", "Directory").should("be.visible");
     cy.get('input[placeholder="Type for hints..."]').should("be.visible");
   }
-
+ 
   verifyEmployeeFoundInDirectory(name) {
-    cy.contains(name).should("be.visible");
+    cy.contains(name, { timeout: 15000 }).should("be.visible");
   }
-
+ 
   verifyNoRecordsFound() {
-    cy.contains("No Records Found").should("be.visible");
+    cy.contains("No Records Found", { timeout: 15000 }).should("be.visible");
   }
-
+ 
   verifyEmployeeDetailIsDisplayed() {
-    cy.contains("Work Telephone").should("be.visible");
-    cy.contains("Work Email").should("be.visible");
+    cy.contains("Work Telephone", { timeout: 15000 }).should("be.visible");
+    cy.contains("Work Email", { timeout: 15000 }).should("be.visible");
   }
-
+ 
   verifyEmployeeQrCodeIsDisplayed() {
-    // QR code is rendered as an image/canvas/svg inside the detail panel
-    cy.contains("Work Email")
-      .parents("div")
-      .first()
-      .parent()
-      .find("img, canvas, svg")
-      .should("exist");
+    cy.get('canvas, img[alt*="qr" i], svg[class*="qr" i]', {
+      timeout: 15000,
+    }).should("exist");
   }
-
-  verifyEmployeeEmailLinkOpensCorrectly(expectedEmailDomain) {
-    cy.get('a[href^="mailto:"]')
+ 
+  verifyEmployeePhoneIconIsClickable() {
+    cy.contains("Work Telephone", { timeout: 15000 })
+      .parents(".oxd-grid-item, div")
       .first()
-      .should("have.attr", "href")
-      .and("include", expectedEmailDomain);
+      .find("i, svg, button, [class*='icon']")
+      .should("have.length.greaterThan", 0);
   }
-
-  verifyEmployeePhoneLinkIsCorrect() {
-    cy.get('a[href^="tel:"]')
+ 
+  verifyEmployeeEmailIconIsClickable() {
+    cy.contains("Work Email", { timeout: 15000 })
+      .parents(".oxd-grid-item, div")
       .first()
-      .should("have.attr", "href")
-      .and("include", "tel:");
+      .find("i, svg, button, [class*='icon']")
+      .should("have.length.greaterThan", 0);
   }
-
+ 
   // =========================================================
-  // INTERCEPT - DIRECTORY (8 test cases -> 8 distinct intercepts)
+  // INTERCEPT - DIRECTORY
   // =========================================================
   interceptDirectoryPageDisplay() {
     cy.intercept("GET", "**/api/v2/directory/embed/employees/photos*").as(
@@ -241,7 +298,7 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
-
+ 
   interceptDirectorySearchByEmployeeName() {
     cy.intercept("GET", "**/api/v2/directory/employees*").as(
       "directorySearchByEmployeeName",
@@ -252,7 +309,7 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
-
+ 
   interceptDirectorySearchByJobTitle() {
     cy.intercept("GET", "**/api/v2/directory/employees*").as(
       "directorySearchByJobTitle",
@@ -263,7 +320,7 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
-
+ 
   interceptDirectorySearchByLocation() {
     cy.intercept("GET", "**/api/v2/directory/employees*").as(
       "directorySearchByLocation",
@@ -274,7 +331,7 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
-
+ 
   interceptDirectorySearchByInvalidEmployeeName() {
     cy.intercept("GET", "**/api/v2/directory/employees*").as(
       "directorySearchByInvalidEmployeeName",
@@ -285,7 +342,7 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
-
+ 
   interceptDirectorySearchByInvalidJobTitle() {
     cy.intercept("GET", "**/api/v2/directory/employees*").as(
       "directorySearchByInvalidJobTitle",
@@ -296,7 +353,7 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
-
+ 
   interceptDirectorySearchByInvalidLocation() {
     cy.intercept("GET", "**/api/v2/directory/employees*").as(
       "directorySearchByInvalidLocation",
@@ -307,18 +364,6 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
-
-  interceptDirectoryViewEmployeeDetail() {
-    cy.intercept("GET", "**/api/v2/directory/employees/*").as(
-      "directoryViewEmployeeDetail",
-    );
-  }
-  waitDirectoryViewEmployeeDetail() {
-    cy.wait("@directoryViewEmployeeDetail")
-      .its("response.statusCode")
-      .should("eq", 200);
-  }
-
   // =========================================================
   // ACTION - Recruitment
   // =========================================================

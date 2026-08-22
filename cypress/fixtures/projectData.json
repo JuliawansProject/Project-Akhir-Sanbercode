@@ -19,6 +19,9 @@
   "directoryInvalidEmployeeName": "Agus Nonexistent",
   "directoryInvalidJobTitle": "Financial Analyst",
   "directoryInvalidLocation": "Canadian Regional HQ",
+  "directoryCardIndexToVerify": 0,
+  "directoryEmployeeWithoutPhotoName": "Alice Brian Naga",
+  "directoryEmployeeWithoutJobTitleLocationName": "Amelia Brian Novak",
 
   "recruitmentValidJobTitle": "Payroll Administrator",
   "recruitmentValidVacancy": "Junior Account Assistant",
