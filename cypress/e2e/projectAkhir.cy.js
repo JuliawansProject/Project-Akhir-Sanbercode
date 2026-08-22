@@ -117,13 +117,11 @@ describe("Project Akhir", () => {
       projectPage.verifyEmployeeFoundInDirectory(data.directoryValidLocation);
     });
 
-     it("TC_DY_005 - Mencoba melihat panel detail untuk karyawan tanpa foto", () => {
+    it("TC_DY_005 - Mencoba melihat panel detail untuk karyawan tanpa foto", () => {
       projectPage.clickAnyEmployeeCard();
       projectPage.verifyEmployeeDetailIsDisplayed();
- 
       cy.get("img", { timeout: 15000 }).should("be.visible");
     });
- 
     it("TC_DY_006 - Mencoba melakukan pencarian berdasarkan job title dengan hasil kosong", () => {
       projectPage.interceptDirectorySearchByInvalidJobTitle();
       cy.get(".oxd-select-text").eq(0).click();
@@ -132,7 +130,6 @@ describe("Project Akhir", () => {
       projectPage.waitDirectorySearchByInvalidJobTitle();
       cy.get("body").should("be.visible");
     });
- 
     it("TC_DY_007 - Mencoba melakukan pencarian berdasarkan location yang tidak terdaftar", () => {
       projectPage.interceptDirectorySearchByInvalidLocation();
       projectPage.selectDirectoryLocation(data.directoryInvalidLocation);
@@ -140,32 +137,27 @@ describe("Project Akhir", () => {
       projectPage.waitDirectorySearchByInvalidLocation();
       projectPage.verifyNoRecordsFound();
     });
- 
     it("TC_DY_008 - Mencoba melihat panel detail untuk karyawan tanpa Job Title/Location", () => {
       projectPage.clickAnyEmployeeCard();
       projectPage.verifyEmployeeDetailIsDisplayed();
- 
       cy.get("body")
         .should("not.contain", "undefined")
         .and("not.contain", "null");
     });
- 
     it("TC_DY_009 - Mencoba melakukan pencarian dengan kombinasi filter (Name + Location)", () => {
       projectPage.fillDirectoryEmployeeName(data.directoryValidEmployeeName);
+      projectPage.interceptDirectorySearchCombined();
       projectPage.selectDirectoryLocation(data.directoryValidLocation);
       projectPage.clickDirectorySearch();
-      cy.wait(1000);
+      projectPage.waitDirectorySearchCombined();
       projectPage.verifyEmployeeFoundInDirectory(
         data.directoryValidEmployeeName,
       );
     });
- 
     it("TC_DY_010 - Verifikasi data pada panel detail sesuai dengan card yang diklik", () => {
       const employeeName = data.directoryValidEmployeeName;
- 
       projectPage.clickEmployeeCardByName(employeeName);
       projectPage.verifyEmployeeDetailIsDisplayed();
- 
       cy.contains(employeeName, { timeout: 15000 }).should("be.visible");
     });
   });

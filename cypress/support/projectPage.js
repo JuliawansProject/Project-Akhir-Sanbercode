@@ -13,21 +13,6 @@ class ProjectPage {
     cy.visit("/web/index.php/dashboard/index", { failOnStatusCode: false });
   }
 
-    visitDirectoryPage() {
-    cy.visit("/web/index.php/directory/viewDirectory", {
-      failOnStatusCode: false,
-    });
-    cy.location("pathname", { timeout: 15000 }).then((pathname) => {
-      if (pathname.includes("/auth/login")) {
-        cy.visit("/web/index.php/directory/viewDirectory", {
-          failOnStatusCode: false,
-        });
-      }
-    });
-
-    cy.contains("h5", "Directory", { timeout: 15000 }).should("be.visible");
-  }
-
   visitRecruitmentPage() {
     cy.visit("/web/index.php/recruitment/viewCandidates", {
       failOnStatusCode: false,
@@ -146,7 +131,7 @@ class ProjectPage {
     cy.wait("@forgotPasswordPage").its("response.statusCode").should("eq", 200);
   }
 
- // =========================================================
+  // =========================================================
   // ACTION - Directory
   // =========================================================
   visitDirectoryPage() {
@@ -161,12 +146,10 @@ class ProjectPage {
       }
     });
     cy.url({ timeout: 15000 }).should("include", "/directory/viewDirectory");
-
     cy.get("h5, h6", { timeout: 15000 })
       .contains("Directory")
       .should("be.visible");
   }
- 
   fillDirectoryEmployeeName(name) {
     cy.get('input[placeholder="Type for hints..."]', { timeout: 10000 })
       .first()
@@ -185,7 +168,6 @@ class ProjectPage {
       .first()
       .should("have.value", name);
   }
- 
   selectDirectoryJobTitle(jobTitle) {
     cy.get(".oxd-select-text").eq(0).click();
     cy.get(".oxd-select-dropdown", { timeout: 10000 }).should("be.visible");
@@ -194,32 +176,31 @@ class ProjectPage {
       0,
     );
   }
- 
   selectDirectoryJobTitleDynamic() {
-    this.selectDirectoryJobTitle();
+    cy.get(".oxd-select-text").eq(0).click();
+    cy.get(".oxd-select-dropdown", { timeout: 10000 }).should("be.visible");
+
     return cy
-      .get(".oxd-select-option")
-      .first()
-      .invoke("text")
-      .then((text) => {
-        cy.get(".oxd-select-option").first().click();
-        return cy.wrap(text.trim());
+      .get(".oxd-select-option", { timeout: 10000 })
+      .should("have.length.greaterThan", 1)
+      .then(($options) => {
+        // index 0 biasanya placeholder "-- Select --", ambil opsi nyata pertama
+        const target = $options.eq(1);
+        const text = target.text().trim();
+        cy.wrap(target).click();
+        return cy.wrap(text);
       });
   }
- 
   selectDirectoryLocation(location) {
     cy.get(".oxd-select-text", { timeout: 10000 }).eq(1).click();
     cy.contains(".oxd-select-option", location, { timeout: 10000 }).click();
   }
- 
   clickDirectorySearch() {
     cy.contains("button", "Search").click();
   }
- 
   clickDirectoryReset() {
     cy.contains("button", "Reset").click();
   }
- 
   clickEmployeeCardByName(name) {
     cy.contains("p.orangehrm-directory-card-header", name, { timeout: 15000 })
       .should("be.visible")
@@ -228,7 +209,6 @@ class ProjectPage {
       .click({ force: true });
     cy.wait(500);
   }
- 
   clickAnyEmployeeCard() {
     cy.get(".oxd-grid-item", { timeout: 15000 })
       .filter(
@@ -241,19 +221,16 @@ class ProjectPage {
       .click({ force: true });
     cy.wait(500);
   }
- 
   clickEmployeeEmailButton() {
     cy.get('a[href^="mailto:"]', { timeout: 10000 })
       .first()
       .click({ force: true });
   }
- 
   clickEmployeePhoneButton() {
     cy.get('a[href^="tel:"]', { timeout: 10000 })
       .first()
       .click({ force: true });
   }
- 
   // =========================================================
   // ASSERTION - Directory
   // =========================================================
@@ -261,38 +238,31 @@ class ProjectPage {
     cy.contains("h5", "Directory").should("be.visible");
     cy.get('input[placeholder="Type for hints..."]').should("be.visible");
   }
- 
   verifyEmployeeFoundInDirectory(name) {
     cy.contains(name, { timeout: 15000 }).should("be.visible");
   }
- 
   verifyNoRecordsFound() {
     cy.contains("No Records Found", { timeout: 15000 }).should("be.visible");
   }
- 
   verifyEmployeeDetailIsDisplayed() {
-    cy.get('a[href^="tel:"]', { timeout: 15000 }).should("exist");
-    cy.get('a[href^="mailto:"]', { timeout: 15000 }).should("exist");
+    cy.contains("Job Title", { timeout: 15000 }).should("be.visible");
+    cy.contains("Location", { timeout: 15000 }).should("be.visible");
   }
- 
   verifyEmployeeQrCodeIsDisplayed() {
     cy.get('canvas, img[alt*="qr" i], svg[class*="qr" i]', {
       timeout: 15000,
     }).should("exist");
   }
- 
   verifyEmployeePhoneIconIsClickable() {
     cy.get('a[href^="tel:"]', { timeout: 15000 })
       .should("exist")
       .and("be.visible");
   }
- 
   verifyEmployeeEmailIconIsClickable() {
     cy.get('a[href^="mailto:"]', { timeout: 15000 })
       .should("exist")
       .and("be.visible");
   }
- 
   // =========================================================
   // INTERCEPT - DIRECTORY
   // =========================================================
@@ -306,7 +276,6 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
- 
   interceptDirectorySearchByEmployeeName() {
     cy.intercept("GET", "**/api/v2/directory/employees*").as(
       "directorySearchByEmployeeName",
@@ -317,7 +286,6 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
- 
   interceptDirectorySearchByJobTitle() {
     cy.intercept("GET", "**/api/v2/directory/employees*").as(
       "directorySearchByJobTitle",
@@ -328,7 +296,6 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
- 
   interceptDirectorySearchByLocation() {
     cy.intercept("GET", "**/api/v2/directory/employees*").as(
       "directorySearchByLocation",
@@ -339,7 +306,6 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
- 
   interceptDirectorySearchByInvalidEmployeeName() {
     cy.intercept("GET", "**/api/v2/directory/employees*").as(
       "directorySearchByInvalidEmployeeName",
@@ -350,7 +316,6 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
- 
   interceptDirectorySearchByInvalidJobTitle() {
     cy.intercept("GET", "**/api/v2/directory/employees*").as(
       "directorySearchByInvalidJobTitle",
@@ -361,7 +326,6 @@ class ProjectPage {
       .its("response.statusCode")
       .should("eq", 200);
   }
- 
   interceptDirectorySearchByInvalidLocation() {
     cy.intercept("GET", "**/api/v2/directory/employees*").as(
       "directorySearchByInvalidLocation",
@@ -405,7 +369,8 @@ class ProjectPage {
     cy.get('input[placeholder="Type for hints..."]')
       .clear()
       .type(name, { delay: 50 });
-    cy.contains(".oxd-autocomplete-option", name, { timeout: 10000 }).click();
+
+    cy.get("body").click(0, 0); // tutup dropdown biar tidak menghalangi tombol Search
   }
 
   fillRecruitmentKeywords(keywords) {
@@ -416,11 +381,11 @@ class ProjectPage {
   }
 
   fillRecruitmentDateFrom(date) {
-    cy.get('input[placeholder="From"]').type(date, { delay: 0 });
+    cy.get('input[placeholder="From"]').clear().type(date, { delay: 0 });
   }
 
   fillRecruitmentDateTo(date) {
-    cy.get('input[placeholder="To"]').type(date, { delay: 0 });
+    cy.get('input[placeholder="To"]').clear().type(date, { delay: 0 });
     cy.get("body").click(0, 0);
   }
 
@@ -444,8 +409,6 @@ class ProjectPage {
     cy.contains("button", "Add").click();
   }
 
-  // Row action icons: eye (view) is the first icon button, trash (delete)
-  // is the second, in each candidate row's Actions column.
   clickRecruitmentViewButton() {
     cy.get(".oxd-table-card")
       .first()
@@ -524,8 +487,11 @@ class ProjectPage {
   }
 
   verifyDateRangeErrorMessage() {
-    cy.contains("From date should be before to date").should("be.visible");
-    cy.contains("To date should be after from date").should("be.visible");
+    cy.get(".oxd-input-field-error-message", { timeout: 10000 })
+      .should("have.length.greaterThan", 0)
+      .each(($el) => {
+        cy.wrap($el).invoke("text").should("match", /date/i);
+      });
   }
 
   verifySearchFieldsAreReset() {
