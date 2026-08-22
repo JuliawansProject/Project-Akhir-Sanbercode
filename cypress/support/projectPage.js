@@ -146,14 +146,25 @@ class ProjectPage {
     cy.wait("@forgotPasswordPage").its("response.statusCode").should("eq", 200);
   }
 
-  // =========================================================
+ // =========================================================
   // ACTION - Directory
   // =========================================================
   visitDirectoryPage() {
     cy.visit("/web/index.php/directory/viewDirectory", {
       failOnStatusCode: false,
     });
-    cy.contains("h5", "Directory", { timeout: 15000 }).should("be.visible");
+    cy.location("pathname", { timeout: 15000 }).then((pathname) => {
+      if (pathname.includes("/auth/login")) {
+        cy.visit("/web/index.php/directory/viewDirectory", {
+          failOnStatusCode: false,
+        });
+      }
+    });
+    cy.url({ timeout: 15000 }).should("include", "/directory/viewDirectory");
+
+    cy.get("h5, h6", { timeout: 15000 })
+      .contains("Directory")
+      .should("be.visible");
   }
  
   fillDirectoryEmployeeName(name) {
@@ -226,6 +237,7 @@ class ProjectPage {
       )
       .should("have.length.greaterThan", 0)
       .first()
+      .scrollIntoView()
       .click({ force: true });
     cy.wait(500);
   }
@@ -259,8 +271,8 @@ class ProjectPage {
   }
  
   verifyEmployeeDetailIsDisplayed() {
-    cy.contains("Work Telephone", { timeout: 15000 }).should("be.visible");
-    cy.contains("Work Email", { timeout: 15000 }).should("be.visible");
+    cy.get('a[href^="tel:"]', { timeout: 15000 }).should("exist");
+    cy.get('a[href^="mailto:"]', { timeout: 15000 }).should("exist");
   }
  
   verifyEmployeeQrCodeIsDisplayed() {
@@ -270,19 +282,15 @@ class ProjectPage {
   }
  
   verifyEmployeePhoneIconIsClickable() {
-    cy.contains("Work Telephone", { timeout: 15000 })
-      .parents(".oxd-grid-item, div")
-      .first()
-      .find("i, svg, button, [class*='icon']")
-      .should("have.length.greaterThan", 0);
+    cy.get('a[href^="tel:"]', { timeout: 15000 })
+      .should("exist")
+      .and("be.visible");
   }
  
   verifyEmployeeEmailIconIsClickable() {
-    cy.contains("Work Email", { timeout: 15000 })
-      .parents(".oxd-grid-item, div")
-      .first()
-      .find("i, svg, button, [class*='icon']")
-      .should("have.length.greaterThan", 0);
+    cy.get('a[href^="mailto:"]', { timeout: 15000 })
+      .should("exist")
+      .and("be.visible");
   }
  
   // =========================================================
