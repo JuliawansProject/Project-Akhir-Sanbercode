@@ -11,5 +11,26 @@
   "spacecdPassword": "  admin123  ",
   "uniCodeUsername": "Admin😀🔥",
   "longUsername": "AdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdminAdmin",
-  "longPassword": "admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123"
+  "longPassword": "admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123admin123",
+
+  "directoryValidEmployeeName": "Peter Mac Anderson",
+  "directoryValidJobTitle": "Chief Financial Officer",
+  "directoryValidLocation": "New York Sales Office",
+  "directoryInvalidEmployeeName": "Agus Nonexistent",
+  "directoryInvalidJobTitle": "Financial Analyst",
+  "directoryInvalidLocation": "Canadian Regional HQ",
+
+  "recruitmentValidJobTitle": "Payroll Administrator",
+  "recruitmentValidVacancy": "Junior Account Assistant",
+  "recruitmentValidHiringManager": "Hugo Ribas Musk",
+  "recruitmentValidStatus": "Application Initiated",
+  "recruitmentValidCandidateName": "ss as",
+  "recruitmentValidKeywords": "payroll",
+  "recruitmentInvalidCandidateName": "Agus Nonexistent",
+  "recruitmentIncompleteKeywords": "senior",
+  "recruitmentDateFromValid": "2026-08-21",
+  "recruitmentDateToValid": "2026-08-24",
+  "recruitmentDateFromInvalid": "2026-08-21",
+  "recruitmentDateToInvalid": "2026-08-15",
+  "recruitmentMethodOfApplication": "Manual"
 }
