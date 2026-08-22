@@ -146,7 +146,6 @@ describe("Project Akhir", () => {
     });
     it("TC_DY_009 - Mencoba melakukan pencarian dengan kombinasi filter (Name + Location)", () => {
       projectPage.fillDirectoryEmployeeName(data.directoryValidEmployeeName);
-      projectPage.interceptDirectorySearchCombined();
       projectPage.selectDirectoryLocation(data.directoryValidLocation);
       projectPage.clickDirectorySearch();
       projectPage.verifyEmployeeFoundInDirectory(

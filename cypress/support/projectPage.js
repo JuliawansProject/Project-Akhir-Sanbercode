@@ -350,13 +350,10 @@ class ProjectPage {
   }
 
   selectRecruitmentHiringManager(manager) {
-  cy.contains("label", "Hiring Manager")
-    .parent()
-    .find(".oxd-select-text")
-    .click();
-  cy.contains(".oxd-select-option", manager).click();
-  cy.contains(".oxd-select-text-input", manager).should("be.visible");
-}
+    cy.get(".oxd-select-text", { timeout: 10000 }).eq(2).click();
+    cy.contains(".oxd-select-option", manager, { timeout: 10000 }).click();
+    cy.get(".oxd-select-text").eq(2).should("contain.text", manager);
+  }
 
   selectRecruitmentStatus(status) {
     cy.get(".oxd-select-text", { timeout: 10000 }).eq(3).click();
@@ -367,7 +364,7 @@ class ProjectPage {
     cy.get('input[placeholder="Type for hints..."]')
       .clear()
       .type(name, { delay: 50 });
-    cy.get("body").click(0, 0); 
+    cy.get("body").click(0, 0);
   }
 
   fillRecruitmentKeywords(keywords) {
@@ -396,10 +393,10 @@ class ProjectPage {
   }
 
   clickRecruitmentReset() {
-  cy.get(".oxd-table-filter-area button[type='reset']")
-    .should("be.visible")
-    .click();
-}
+    cy.get(".oxd-table-filter-area button[type='reset']")
+      .should("be.visible")
+      .click();
+  }
 
   clickRecruitmentAddButton() {
     cy.contains("button", "Add").click();
@@ -516,10 +513,10 @@ class ProjectPage {
     cy.contains("Success").should("be.visible");
   }
   verifyDropdownSelectedValue(dropdownIndex, expectedText) {
-  cy.get(".oxd-select-text-input")
-    .eq(dropdownIndex)
-    .should("contain.text", expectedText);
-}
+    cy.get(".oxd-select-text-input")
+      .eq(dropdownIndex)
+      .should("contain.text", expectedText);
+  }
 
   // =========================================================
   // INTERCEPT - RECRUITMENT (8 test cases -> 8 distinct intercepts)
